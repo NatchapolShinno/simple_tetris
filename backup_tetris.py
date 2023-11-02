@@ -26,13 +26,13 @@ tetrominos = [
 ]
 # Define colors for each tetromino
 tetromino_colors = {
-    0: RED,    # I-Mino
-    1: GREEN,  # T-Mino
-    2: BLUE,   # L-Mino
-    3: YELLOW,  # J-Mino
-    4: CYAN,   # S-Mino
-    5: MAGENTA,  # Z-Mino
-    6: ORANGE  # O-Mino
+    0: CYAN,    # I-Mino
+    1: MAGENTA,  # T-Mino
+    2: ORANGE,   # L-Mino
+    3: BLUE,  # J-Mino
+    4: GREEN,   # S-Mino
+    5: RED,  # Z-Mino
+    6: YELLOW  # O-Mino
 }
 
 # Define the fixed order of tetrominos
@@ -74,13 +74,13 @@ def draw_grid():
                 draw_block(x, y, val)
 
 
-# def new_mino():
-#     return random.choice(tetrominos)
 def new_mino():
-    global next_mino_index
-    current_mino = tetrominos[fixed_order_tetrominos[next_mino_index]]
-    next_mino_index = (next_mino_index + 1) % len(fixed_order_tetrominos)
-    return current_mino
+    return random.choice(tetrominos)
+# def new_mino():
+#     global next_mino_index
+#     current_mino = tetrominos[fixed_order_tetrominos[next_mino_index]]
+#     next_mino_index = (next_mino_index + 1) % len(fixed_order_tetrominos)
+#     return current_mino
 
 def collide(current_mino, x, y):
     for row_index, row in enumerate(current_mino):
