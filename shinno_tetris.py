@@ -12,31 +12,45 @@ YELLOW = (246, 208, 60)
 CYAN = (66, 175, 225)
 MAGENTA = (151, 57, 162)
 ORANGE = (243, 137, 39)
-GHOST_COLOR = (255, 255, 255,0.1)
+GHOST_COLOR = (255, 255, 255, 0.1)
 
 # Define tetrominos without colors
 tetrominos = [
-    [[1, 1, 1, 1]],        # I-Mino
-    [[1, 1, 1], [0, 1, 0]],    # T-Mino
-    [[1, 1, 1], [1, 0, 0]],    # L-Mino
-    [[1, 1, 1], [0, 0, 1]],    # J-Mino
-    [[0, 1, 1], [1, 1, 0]],    # S-Mino
-    [[1, 1, 0], [0, 1, 1]],    # Z-Mino
-    [[1, 1], [1, 1]]        # O-Mino
+    [[1, 1, 1, 1]],  # I-Mino
+    [[1, 1, 1], [0, 1, 0]],  # T-Mino
+    [[1, 1, 1], [1, 0, 0]],  # L-Mino
+    [[1, 1, 1], [0, 0, 1]],  # J-Mino
+    [[0, 1, 1], [1, 1, 0]],  # S-Mino
+    [[1, 1, 0], [0, 1, 1]],  # Z-Mino
+    [[1, 1], [1, 1]],  # O-Mino
 ]
 # Define colors for each tetromino
 tetromino_colors = {
-    0: RED,    # I-Mino
+    0: RED,  # I-Mino
     1: GREEN,  # T-Mino
-    2: BLUE,   # L-Mino
+    2: BLUE,  # L-Mino
     3: YELLOW,  # J-Mino
-    4: CYAN,   # S-Mino
+    4: CYAN,  # S-Mino
     5: MAGENTA,  # Z-Mino
-    6: ORANGE  # O-Mino
+    6: ORANGE,  # O-Mino
 }
 
 # Define the fixed order of tetrominos
 fixed_order_tetrominos = [0, 1, 2, 3, 4, 5, 6]  # Change the order as needed
+
+
+def generate_rounds(N):
+    round_array = list(range(N))
+    random.shuffle(round_array)
+    return round_array
+
+
+ROUNDS = 2
+SHAPE_INDEX = 7
+minos = []
+
+for _ in range(ROUNDS):
+    minos.extend(generate_rounds(SHAPE_INDEX))
 
 next_mino_index = 0  # Initialize the index to track the next tetromino
 
@@ -61,10 +75,12 @@ clock = pygame.time.Clock()
 
 
 def draw_block(x, y, color):
-    pygame.draw.rect(win, color, (x * block_size, y *
-                     block_size, block_size, block_size))
-    pygame.draw.rect(win, WHITE, (x * block_size, y *
-                     block_size, block_size, block_size), 1)
+    pygame.draw.rect(
+        win, color, (x * block_size, y * block_size, block_size, block_size)
+    )
+    pygame.draw.rect(
+        win, WHITE, (x * block_size, y * block_size, block_size, block_size), 1
+    )
 
 
 def draw_grid():
@@ -82,13 +98,18 @@ def new_mino():
     next_mino_index = (next_mino_index + 1) % len(fixed_order_tetrominos)
     return current_mino
 
+
 def collide(current_mino, x, y):
     for row_index, row in enumerate(current_mino):
         for col_index, val in enumerate(row):
             if val:
                 grid_row = y + row_index
                 grid_col = x + col_index
-                if not 0 <= grid_row < height or not 0 <= grid_col < width or grid[grid_row][grid_col]:
+                if (
+                    not 0 <= grid_row < height
+                    or not 0 <= grid_col < width
+                    or grid[grid_row][grid_col]
+                ):
                     return True
     return False
 
@@ -111,16 +132,27 @@ def clear_rows():
 def game_over():
     font = pygame.font.SysFont(None, 48)
     text = font.render("Game Over", True, WHITE)
-    win.blit(text, (win_width // 2 - text.get_width() //
-             2, win_height // 2 - text.get_height() // 2))
+    win.blit(
+        text,
+        (
+            win_width // 2 - text.get_width() // 2,
+            win_height // 2 - text.get_height() // 2,
+        ),
+    )
     pygame.display.update()
     pygame.time.wait(10000)
+
 
 def game_clear():
     font = pygame.font.SysFont(None, 36)
     text = font.render("Congratulations", True, WHITE)
-    win.blit(text, (win_width // 2 - text.get_width() //
-             2, win_height // 2 - text.get_height() // 2))
+    win.blit(
+        text,
+        (
+            win_width // 2 - text.get_width() // 2,
+            win_height // 2 - text.get_height() // 2,
+        ),
+    )
     pygame.display.update()
     pygame.time.wait(10000)
 
@@ -143,6 +175,7 @@ def instant_drop(current_mino, x, y):
         new_y += 1
     return x, new_y
 
+
 def handle_input(current_mino, x, y, current_color):
     instant_dropped = False  # Initialize instant_dropped outside the event loop
 
@@ -160,13 +193,16 @@ def handle_input(current_mino, x, y, current_color):
                 rotated_mino = list(zip(*current_mino[::-1]))
                 if not collide(rotated_mino, x, y):
                     current_mino = rotated_mino
-            if event.key == pygame.K_SPACE and not instant_dropped:  # Space key for instant drop
+            if (
+                event.key == pygame.K_SPACE and not instant_dropped
+            ):  # Space key for instant drop
                 x, y = instant_drop(current_mino, x, y)
                 instant_dropped = True
     return False, x, y, current_mino, current_color
 
 
 # (Previous code remains the same)
+
 
 def get_mino_type(current_mino):
     for i, shape in enumerate(tetrominos):
@@ -198,8 +234,17 @@ def draw_ghost_piece(current_mino, x, y):
     for row_idx, row in enumerate(ghost_piece):
         for col_idx, cell in enumerate(row):
             if cell:
-                pygame.draw.rect(win, GHOST_COLOR, ((
-                    x + col_idx) * block_size, (ghost_y + row_idx) * block_size, block_size, block_size))
+                pygame.draw.rect(
+                    win,
+                    GHOST_COLOR,
+                    (
+                        (x + col_idx) * block_size,
+                        (ghost_y + row_idx) * block_size,
+                        block_size,
+                        block_size,
+                    ),
+                )
+
 
 def game():
     current_mino = new_mino()
@@ -213,7 +258,8 @@ def game():
     while not game_over_flag:
         win.fill(BLACK)
         game_over_flag, x, y, current_mino, current_mino_color = handle_input(
-            current_mino, x, y, current_mino_color)
+            current_mino, x, y, current_mino_color
+        )
         draw_ghost_piece(current_mino, x, y)
         if not game_over_flag:
             time_elapsed += clock.get_rawtime()
@@ -229,8 +275,7 @@ def game():
                         game_over_flag = True
                         game_clear()
                     current_mino = new_mino()
-                    current_mino_color = tetromino_colors[get_mino_type(
-                        current_mino)]
+                    current_mino_color = tetromino_colors[get_mino_type(current_mino)]
                     x, y = width // 2 - len(current_mino[0]) // 2, 0
                     if collide(current_mino, x, y):
                         game_over_flag = True
@@ -241,8 +286,7 @@ def game():
             for row_index, row in enumerate(current_mino):
                 for col_index, val in enumerate(row):
                     if val:
-                        draw_block(x + col_index, y + row_index,
-                                   current_mino_color)
+                        draw_block(x + col_index, y + row_index, current_mino_color)
 
             pygame.display.update()
 
