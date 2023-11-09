@@ -61,3 +61,34 @@ def rotate_piece():
     rotated_piece = list(zip(*reversed(current_piece)))
     if not check_collision(rotated_piece, x, y):
         current_piece = rotated_piece
+
+def check_hole(field):
+    count = 0
+    hole = [[0] * ((WIDTH + 60) // BLOCK_SIZE) for _ in range(HEIGHT // BLOCK_SIZE)]
+    for i in range(12):
+        for j in range(20):
+            if i == 0 or i== 11:
+                hole[j][i] = 1
+            else:
+                hole[j][i] = field[j][i-1]
+    
+    ch = 0
+    for i in range(1,11):
+        if ch == 0 and (hole[19][i] == 0 and hole[19][i-1] == 1):
+            ch = 1
+        if ch == 1 and (hole[19][i] == 0 and hole[19][i+1] == 1):
+            count = count + 1
+            ch = 0
+
+    ch = 0
+    for j in range(1,4):
+        for i in range(1,11):        
+            if ch == 0 and hole[19-j][i] == 0 and hole[19-j][i-1] == 1:
+                ch = 1
+            if ch == 1 and hole[19-j][i] == 0 and hole[19-j+1][i] == 0:
+                ch = 0
+            if ch == 1 and hole[19-j][i] == 0 and hole[19-j][i+1] == 1:
+                count = count + 1
+                ch = 0  
+
+    return count

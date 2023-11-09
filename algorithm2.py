@@ -56,6 +56,11 @@ def search_perfect(current_map,piece,rotation_count,x,next):
         if fun.playfield[15][i] == 1:
             return 0
     
+    if piece > 3:    
+        hole_count = fun.check_hole(fun.playfield)
+        if hole_count > 9 - piece:
+            return 0
+    
     current_map = copy.deepcopy(fun.playfield)
     if piece < 5:
         print(piece,rotation_count,x)
